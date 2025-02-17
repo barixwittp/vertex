@@ -4,10 +4,6 @@
   "installCommand": "npm install",
   "framework": "nextjs",
   "outputDirectory": ".next",
-  "env": {
-    "NEXT_PUBLIC_WAQI_TOKEN": "@next_public_waqi_token",
-    "NEXT_PUBLIC_OPENWEATHER_KEY": "@next_public_openweather_key"
-  },
   "headers": [
     {
       "source": "/(.*)",
