@@ -1,0 +1,16 @@
+{
+  "name": "VayuSathi",
+  "short_name": "VayuSathi",
+  "description": "Real-time Air Quality Monitor",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#10b981",
+  "icons": [
+    {
+      "src": "/images/logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+} 
