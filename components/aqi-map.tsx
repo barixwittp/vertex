@@ -45,17 +45,38 @@ const createCustomIcon = (color: string) => {
   })
 }
 
+interface SearchResult {
+  lat: number;
+  lon: number;
+  display_name: string;
+}
+
+// Add this helper function for temperature conversion
+const kelvinToCelsius = (kelvin: number) => {
+  return Math.round(kelvin - 273.15)
+}
+
+// Add this function to get AQI status text and color
+const getAQIStatus = (aqi: number): { text: string; color: string } => {
+  if (aqi <= 50) return { text: 'Good', color: '#00e400' }
+  if (aqi <= 100) return { text: 'Moderate', color: '#ffff00' }
+  if (aqi <= 150) return { text: 'Unhealthy for Sensitive Groups', color: '#ff7e00' }
+  if (aqi <= 200) return { text: 'Unhealthy', color: '#ff0000' }
+  if (aqi <= 300) return { text: 'Very Unhealthy', color: '#99004c' }
+  return { text: 'Hazardous', color: '#7e0023' }
+}
+
 export function AQIMap() {
   const mapContainerRef = useRef<HTMLDivElement>(null)
   const { location } = useLocation()
   const [map, setMap] = useState<any>(null)
   const [clickedLocation, setClickedLocation] = useState<any>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchQuery, setSearchQuery] = useState("")
   const [isSearching, setIsSearching] = useState(false)
   const { toast } = useToast()
 
-  // Function to handle location search
+  // Update the search handler
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!searchQuery.trim() || !map) return
@@ -65,15 +86,114 @@ export function AQIMap() {
       const response = await fetch(
         `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(searchQuery)}`
       )
-      const data = await response.json()
+      const data: SearchResult[] = await response.json()
 
       if (data && data.length > 0) {
-        const { lat, lon } = data[0]
-        map.flyTo([lat, lon], 12)
+        const { lat, lon, display_name } = data[0]
         
-        // Simulate a click at this location
-        const clickEvent = { latlng: { lat, lng: lon } }
-        map.fire('click', clickEvent)
+        // Slower animation (increased duration from 2 to 3 seconds)
+        map.flyTo([lat, lon], 12, {
+          duration: 3,
+          easeLinearity: 0.1 // Made animation smoother
+        })
+
+        // Fetch both AQI and weather data
+        const [aqiData, weatherResponse] = await Promise.all([
+          AQIService.getNearestStation(Number(lat), Number(lon)),
+          fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${process.env.NEXT_PUBLIC_OPENWEATHER_KEY}`)
+        ])
+
+        const weatherData = await weatherResponse.json()
+
+        // Create detailed popup content
+        const status = getAQIStatus(aqiData.aqi)
+        const popupContent = `
+          <div class="p-4">
+            <h3 class="font-bold text-base sm:text-lg mb-2 line-clamp-2">${display_name}</h3>
+            
+            <div class="grid gap-3">
+              <div class="bg-background/50 p-3 rounded-lg border border-border/50">
+                <div class="text-sm font-medium mb-1">Air Quality</div>
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2">
+                    <div class="text-2xl sm:text-3xl font-bold" style="color: ${status.color}">${aqiData.aqi}</div>
+                    <div class="text-xs text-muted-foreground">AQI</div>
+                  </div>
+                  <div class="px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm" 
+                       style="background-color: ${status.color}20; color: ${status.color}">
+                    ${status.text}
+                  </div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-2">
+                <div class="bg-background/50 p-3 rounded-lg border border-border/50">
+                  <div class="text-sm font-medium mb-1">Weather</div>
+                  <div class="text-xl font-bold">${kelvinToCelsius(weatherData.main.temp)}°C</div>
+                  <div class="text-xs text-muted-foreground">${weatherData.weather[0].main}</div>
+                </div>
+                <div class="bg-background/50 p-3 rounded-lg border border-border/50">
+                  <div class="text-sm font-medium mb-1">Humidity</div>
+                  <div class="text-xl font-bold">${weatherData.main.humidity}%</div>
+                  <div class="text-xs text-muted-foreground">Wind: ${Math.round(weatherData.wind.speed * 3.6)} km/h</div>
+                </div>
+              </div>
+
+              <div class="bg-background/50 p-3 rounded-lg border border-border/50">
+                <div class="text-sm font-medium mb-2">Pollutants</div>
+                <div class="grid grid-cols-2 gap-2 text-sm">
+                  ${Object.entries(aqiData.pollutants).map(([key, value]) => `
+                    <div class="flex items-center justify-between">
+                      <span class="text-muted-foreground">${key.toUpperCase()}:</span>
+                      <span class="font-medium">${value || 'N/A'}</span>
+                    </div>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        `
+
+        // Add marker with detailed popup
+        const locationIcon = createCustomIcon(getAQIColor(aqiData.aqi))
+        L.marker([lat, lon], {
+          icon: locationIcon,
+        })
+          .addTo(map)
+          .bindPopup(popupContent, {
+            maxWidth: 350,
+            className: 'custom-popup'
+          })
+          .openPopup()
+
+        // Add AQI circle with animation
+        const circle = L.circle([lat, lon], {
+          color: getAQIColor(aqiData.aqi),
+          fillColor: getAQIColor(aqiData.aqi),
+          fillOpacity: 0,
+          radius: 0
+        }).addTo(map)
+
+        // Animate the circle
+        let opacity = 0
+        let radius = 0
+        const animate = () => {
+          opacity += 0.01
+          radius += 100
+          if (opacity <= 0.2) {
+            circle.setStyle({
+              fillOpacity: opacity,
+              radius: radius
+            })
+            requestAnimationFrame(animate)
+          }
+        }
+        animate()
+
+        toast({
+          title: "Location found",
+          description: `Showing results for ${display_name}`,
+        })
       } else {
         toast({
           title: "Location not found",
@@ -82,6 +202,7 @@ export function AQIMap() {
         })
       }
     } catch (error) {
+      console.error('Search error:', error)
       toast({
         title: "Search failed",
         description: "Error searching for location",
@@ -224,18 +345,22 @@ export function AQIMap() {
   }
 
   return (
-    <div className="space-y-4">
-      {/* Search Bar */}
-      <div className="relative">
+    <div className="fixed inset-0 pt-16">
+      {/* Search Bar - Mobile Optimized */}
+      <div className="fixed top-20 left-1/2 transform -translate-x-1/2 w-full max-w-md px-4 z-[1000]">
         <form onSubmit={handleSearch} className="flex gap-2">
           <Input
             type="text"
             placeholder="Search location..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="flex-1"
+            className="flex-1 bg-background/95 backdrop-blur-sm shadow-lg border-2 h-11 sm:h-10"
           />
-          <Button type="submit" disabled={isSearching}>
+          <Button 
+            type="submit" 
+            disabled={isSearching}
+            className="bg-primary hover:bg-primary/90 text-white shadow-lg h-11 sm:h-10 px-3 sm:px-4"
+          >
             {isSearching ? (
               <Loader2 className="h-4 w-4 animate-spin" />
             ) : (
@@ -245,53 +370,50 @@ export function AQIMap() {
         </form>
       </div>
 
-      <div className="relative w-full h-[calc(100vh-12rem)] rounded-lg overflow-hidden shadow-lg">
+      <div className="w-full h-[calc(100vh-5rem)] pb-16">
         <div 
           ref={mapContainerRef} 
-          className="w-full h-full z-0" 
-          style={{ 
-            position: 'relative',
-            backgroundColor: 'rgba(0,0,0,0.05)'
-          }} 
+          className="w-full h-full relative" 
+          style={{ backgroundColor: 'rgba(0,0,0,0.05)' }}
         />
         
-        {/* Map Controls */}
-        <div className="absolute top-4 right-4 flex flex-col gap-2 z-[400]">
+        {/* Map Controls - Mobile Optimized */}
+        <div className="absolute top-32 sm:top-20 right-4 flex flex-col gap-2 z-[400]">
           <Button
             variant="outline"
             size="icon"
-            className="bg-background/95 backdrop-blur-sm shadow-md"
+            className="bg-background/95 backdrop-blur-sm shadow-lg h-11 w-11 sm:h-10 sm:w-10"
             onClick={goToCurrentLocation}
             title="Go to current location"
           >
-            <Crosshair className="h-4 w-4" />
+            <Crosshair className="h-5 w-5 sm:h-4 sm:w-4" />
           </Button>
           <Button
             variant="outline"
             size="icon"
-            className="bg-background/95 backdrop-blur-sm shadow-md"
+            className="bg-background/95 backdrop-blur-sm shadow-lg h-11 w-11 sm:h-10 sm:w-10"
           >
-            <Layers className="h-4 w-4" />
+            <Layers className="h-5 w-5 sm:h-4 sm:w-4" />
           </Button>
         </div>
 
-        {/* AQI Legend */}
-        <Card className="absolute bottom-4 left-4 p-3 bg-background/95 backdrop-blur-sm z-[400] shadow-lg">
+        {/* AQI Legend - Mobile Optimized */}
+        <Card className="absolute bottom-20 left-4 right-4 sm:right-auto p-3 bg-background/95 backdrop-blur-sm z-[400] shadow-lg">
           <div className="text-sm font-medium mb-2">AQI Legend</div>
-          <div className="grid grid-cols-2 gap-2 text-xs">
-            <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-2 gap-2 text-xs map-legend-mobile">
+            <div className="flex items-center gap-2 whitespace-nowrap">
               <div className="w-3 h-3 rounded-full" style={{backgroundColor: '#00e400'}} />
               <span>Good (0-50)</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 whitespace-nowrap">
               <div className="w-3 h-3 rounded-full" style={{backgroundColor: '#ffff00'}} />
               <span>Moderate (51-100)</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 whitespace-nowrap">
               <div className="w-3 h-3 rounded-full" style={{backgroundColor: '#ff7e00'}} />
-              <span>Unhealthy for Sensitive (101-150)</span>
+              <span>Unhealthy for Sensitive</span>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 whitespace-nowrap">
               <div className="w-3 h-3 rounded-full" style={{backgroundColor: '#ff0000'}} />
               <span>Unhealthy (151-200)</span>
             </div>

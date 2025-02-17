@@ -6,7 +6,7 @@ import { Loader2 } from "lucide-react"
 // Loading component
 function LoadingMap() {
   return (
-    <div className="flex justify-center items-center min-h-[60vh]">
+    <div className="fixed inset-0 pt-16 flex justify-center items-center">
       <div className="flex items-center gap-2">
         <Loader2 className="h-6 w-6 animate-spin" />
         <div className="text-lg">Loading map...</div>
@@ -25,11 +25,6 @@ const AQIMap = dynamic(
 )
 
 export default function MapPage() {
-  return (
-    <div className="container mx-auto p-4">
-      <h1 className="sr-only">VayuSathi Map</h1>
-      <AQIMap />
-    </div>
-  )
+  return <AQIMap />
 }
 

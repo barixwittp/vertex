@@ -60,7 +60,7 @@ export function NavigationBar() {
   }), [pathname])
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t py-1">
+    <nav className="fixed bottom-0 left-0 right-0 bg-background/80 backdrop-blur-lg border-t py-1 z-[1000]">
       <div className="flex justify-around items-center max-w-md mx-auto">
         {navigationItems}
       </div>
