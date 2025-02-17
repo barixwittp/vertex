@@ -1,6 +1,6 @@
 const WAQI_API_KEY = process.env.NEXT_PUBLIC_WAQI_TOKEN;
 const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
-const WAQI_BASE_URL = 'https://api.waqi.info';
+const WAQI_BASE_URL = 'https://api.waqi.info/v2';
 const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 interface LocationDetails {
@@ -24,76 +24,110 @@ export interface AQIData {
     co?: number;
   };
   location?: {
-    lat: number;
-    lng: number;
+    latitude: number;
+    longitude: number;
   };
   locationDetails?: LocationDetails;
 }
 
 // Add caching for API responses
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
-const cache = new Map();
+
+interface CacheItem<T> {
+  data: T;
+  timestamp: number;
+}
 
 export class AQIService {
-  private static async fetchWithCache(url: string) {
-    const cached = cache.get(url);
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+  private static cache: Map<string, CacheItem<any>> = new Map();
+
+  private static async fetchWithCache<T>(
+    key: string,
+    fetchFn: () => Promise<T>
+  ): Promise<T> {
+    const cached = this.cache.get(key);
+    const now = Date.now();
+
+    if (cached && now - cached.timestamp < CACHE_DURATION) {
       return cached.data;
     }
 
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    cache.set(url, {
-      data,
-      timestamp: Date.now()
-    });
-
+    const data = await fetchFn();
+    this.cache.set(key, { data, timestamp: now });
     return data;
   }
 
-  static async getNearestStation(lat: number, lng: number): Promise<AQIData> {
-    try {
-      const url = `${WAQI_BASE_URL}/feed/geo:${lat};${lng}/?token=${WAQI_API_KEY}`;
-      const data = await this.fetchWithCache(url);
+  static async getNearestStation(lat: number, lon: number): Promise<AQIData> {
+    const cacheKey = `station:${lat},${lon}`;
+    
+    return this.fetchWithCache(cacheKey, async () => {
+      try {
+        const url = `${WAQI_BASE_URL}/feed/geo:${lat};${lon}/?token=${WAQI_API_KEY}`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch AQI data');
+        }
 
-      // Get location details from OpenWeather Geocoding API
-      const locationResponse = await fetch(
-        `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lng}&limit=1&appid=${OPENWEATHER_API_KEY}`
-      );
-      const locationData = await locationResponse.json();
-      const locationDetails = locationData[0] ? {
-        city: locationData[0].name,
-        state: locationData[0].state,
-        country: locationData[0].country,
-        formatted_address: `${locationData[0].name}, ${locationData[0].state || ''} ${locationData[0].country}`
-      } : undefined;
+        const data = await response.json();
+        
+        if (data.status !== 'ok') {
+          throw new Error(data.message || 'Failed to fetch AQI data');
+        }
 
-      if (data.status !== 'ok') {
-        throw new Error('Failed to fetch AQI data');
+        return this.transformStationData(data.data);
+      } catch (error) {
+        console.error('Error fetching AQI data:', error);
+        throw error;
       }
+    });
+  }
 
-      return {
-        aqi: data.data.aqi,
-        station: data.data.city.name,
-        city: locationDetails?.city || data.data.city.name,
-        time: new Date().toISOString(),
-        pollutants: {
-          pm25: data.data.iaqi?.pm25?.v || 0,
-          pm10: data.data.iaqi?.pm10?.v || 0,
-          o3: data.data.iaqi?.o3?.v || 0,
-          no2: data.data.iaqi?.no2?.v || 0,
-        },
-        location: {
-          lat: data.data.city.geo[0],
-          lng: data.data.city.geo[1]
-        },
-        locationDetails
-      };
-    } catch (error) {
-      console.error('Error fetching AQI data:', error);
-      throw error;
-    }
+  static async searchStations(query: string): Promise<AQIData[]> {
+    const cacheKey = `search:${query}`;
+    
+    return this.fetchWithCache(cacheKey, async () => {
+      try {
+        const url = `${WAQI_BASE_URL}/search/?token=${WAQI_API_KEY}&keyword=${encodeURIComponent(query)}`;
+        const response = await fetch(url);
+        
+        if (!response.ok) {
+          throw new Error('Failed to search stations');
+        }
+
+        const data = await response.json();
+        
+        if (data.status !== 'ok') {
+          throw new Error(data.message || 'Failed to search stations');
+        }
+
+        return data.data.map(this.transformStationData);
+      } catch (error) {
+        console.error('Error searching stations:', error);
+        throw error;
+      }
+    });
+  }
+
+  private static transformStationData(data: any): AQIData {
+    return {
+      aqi: data.aqi,
+      station: data.station.name,
+      city: data.city?.name,
+      time: data.time.iso,
+      pollutants: {
+        pm25: data.iaqi.pm25?.v || 0,
+        pm10: data.iaqi.pm10?.v || 0,
+        o3: data.iaqi.o3?.v || 0,
+        no2: data.iaqi.no2?.v || 0,
+        so2: data.iaqi.so2?.v,
+        co: data.iaqi.co?.v
+      },
+      location: data.city ? {
+        latitude: data.city.geo[0],
+        longitude: data.city.geo[1]
+      } : undefined
+    };
   }
 
   private static async getOpenWeatherData(lat: number, lng: number): Promise<AQIData | null> {
@@ -122,8 +156,8 @@ export class AQIService {
           no2: components.no2 || 0,
         },
         location: {
-          lat,
-          lng
+          latitude: lat,
+          longitude: lng
         }
       };
     } catch (error) {
@@ -154,8 +188,8 @@ export class AQIService {
         no2: data.data.iaqi.no2?.v || 0,
       },
       location: data.data.city.geo ? {
-        lat: data.data.city.geo[0],
-        lng: data.data.city.geo[1]
+        latitude: data.data.city.geo[0],
+        longitude: data.data.city.geo[1]
       } : undefined,
     };
   }
@@ -170,60 +204,5 @@ export class AQIService {
       5: 300  // Very Poor
     };
     return aqiRanges[openWeatherAQI as keyof typeof aqiRanges] || 0;
-  }
-
-  static async searchStations(query: string): Promise<AQIData[]> {
-    const cacheKey = `search:${query}`
-    return this.fetchWithCache(cacheKey, async () => {
-      try {
-        const url = `${WAQI_BASE_URL}/search/?token=${WAQI_API_KEY}&keyword=${encodeURIComponent(query)}`
-        const response = await fetch(url)
-        const data = await response.json()
-        
-        if (data.status !== 'ok') {
-          throw new Error('Failed to search stations')
-        }
-
-        // Fetch detailed data for each station
-        const detailedData = await Promise.all(
-          data.data.slice(0, 10).map(async (station: any) => { // Limit to 10 stations for faster loading
-            try {
-              const detailResponse = await fetch(
-                `${WAQI_BASE_URL}/feed/@${station.uid}/?token=${WAQI_API_KEY}`
-              )
-              const detailData = await detailResponse.json()
-              
-              if (detailData.status === 'ok') {
-                return {
-                  aqi: station.aqi,
-                  station: station.station.name,
-                  city: station.station.city || station.station.name,
-                  time: new Date().toISOString(),
-                  pollutants: {
-                    pm25: detailData.data.iaqi?.pm25?.v || 0,
-                    pm10: detailData.data.iaqi?.pm10?.v || 0,
-                    o3: detailData.data.iaqi?.o3?.v || 0,
-                    no2: detailData.data.iaqi?.no2?.v || 0,
-                  },
-                  location: detailData.data.city.geo ? {
-                    lat: detailData.data.city.geo[0],
-                    lng: detailData.data.city.geo[1]
-                  } : undefined,
-                }
-              }
-            } catch (error) {
-              console.error('Error fetching station details:', error)
-            }
-            
-            return null
-          })
-        )
-
-        return detailedData.filter(Boolean)
-      } catch (error) {
-        console.error('Error searching stations:', error)
-        throw error
-      }
-    })
   }
 } 
