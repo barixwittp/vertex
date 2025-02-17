@@ -48,15 +48,13 @@
 <hr>
 
 ## 🎥 Demo Video
+<p><em>Watch the demo video to see VayuSathi in action:</em></p>
+<a href="https://youtu.be/0CSXMMR4Cjc" target="_blank">
+    <img srchttps://youtu.be/0CSXMMR4Cjc.jpg" alt="Demo Video" width="600">
+</a>
 
-Watch the demo video to see VayuSathi in action:
 
-[![Watch the Demo](path/to/thumbnail.png)](demo.mp4)
 
-➡️ **[Click here to watch the demo video](demo.mp4)**  
-*(Right-click and select "Save link as..." to download)*
-
-<hr>
 
 <h2>🚀 Features</h2>
 <ul>
