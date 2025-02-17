@@ -1,6 +1,6 @@
-const WAQI_API_KEY = process.env.WAQI_TOKEN;
-const OPENWEATHER_API_KEY = process.env.OPENWEATHER_KEY;
-const WAQI_BASE_URL = 'https://api.waqi.info/v2';
+const WAQI_API_KEY = process.env.NEXT_PUBLIC_WAQI_TOKEN;
+const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
+const WAQI_BASE_URL = 'https://api.waqi.info';
 const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 
 interface LocationDetails {
@@ -52,9 +52,14 @@ export class AQIService {
       return cached.data;
     }
 
-    const data = await fetchFn();
-    this.cache.set(key, { data, timestamp: now });
-    return data;
+    try {
+      const data = await fetchFn();
+      this.cache.set(key, { data, timestamp: now });
+      return data;
+    } catch (error) {
+      console.error('Cache fetch error:', error);
+      throw error;
+    }
   }
 
   static async getNearestStation(lat: number, lon: number): Promise<AQIData> {
@@ -63,22 +68,22 @@ export class AQIService {
     return this.fetchWithCache(cacheKey, async () => {
       try {
         const url = `${WAQI_BASE_URL}/feed/geo:${lat};${lon}/?token=${WAQI_API_KEY}`;
+        console.log('Fetching AQI data from:', url);
+        
         const response = await fetch(url);
-        
         if (!response.ok) {
-          throw new Error('Failed to fetch AQI data');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
-
-        const data = await response.json();
         
-        if (data.status !== 'ok') {
-          throw new Error(data.message || 'Failed to fetch AQI data');
+        const data = await response.json();
+        if (data.status !== 'ok' || !data.data) {
+          throw new Error(data.data || 'Invalid response from AQI API');
         }
 
         return this.transformStationData(data.data);
       } catch (error) {
         console.error('Error fetching AQI data:', error);
-        throw error;
+        throw new Error('Failed to fetch AQI data');
       }
     });
   }
@@ -89,41 +94,45 @@ export class AQIService {
     return this.fetchWithCache(cacheKey, async () => {
       try {
         const url = `${WAQI_BASE_URL}/search/?token=${WAQI_API_KEY}&keyword=${encodeURIComponent(query)}`;
-        const response = await fetch(url);
+        console.log('Searching stations at:', url);
         
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error('Failed to search stations');
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const data = await response.json();
-        
-        if (data.status !== 'ok') {
-          throw new Error(data.message || 'Failed to search stations');
+        if (data.status !== 'ok' || !data.data) {
+          throw new Error(data.data || 'Invalid response from search API');
         }
 
         return data.data.map(this.transformStationData);
       } catch (error) {
         console.error('Error searching stations:', error);
-        throw error;
+        throw new Error('Failed to search stations');
       }
     });
   }
 
   private static transformStationData(data: any): AQIData {
+    if (!data || typeof data.aqi === 'undefined') {
+      throw new Error('Invalid station data');
+    }
+
     return {
       aqi: data.aqi,
-      station: data.station.name,
+      station: data.station?.name || 'Unknown Station',
       city: data.city?.name,
-      time: data.time.iso,
+      time: data.time?.iso || new Date().toISOString(),
       pollutants: {
-        pm25: data.iaqi.pm25?.v || 0,
-        pm10: data.iaqi.pm10?.v || 0,
-        o3: data.iaqi.o3?.v || 0,
-        no2: data.iaqi.no2?.v || 0,
-        so2: data.iaqi.so2?.v,
-        co: data.iaqi.co?.v
+        pm25: data.iaqi?.pm25?.v || 0,
+        pm10: data.iaqi?.pm10?.v || 0,
+        o3: data.iaqi?.o3?.v || 0,
+        no2: data.iaqi?.no2?.v || 0,
+        so2: data.iaqi?.so2?.v,
+        co: data.iaqi?.co?.v
       },
-      location: data.city ? {
+      location: data.city?.geo ? {
         latitude: data.city.geo[0],
         longitude: data.city.geo[1]
       } : undefined
