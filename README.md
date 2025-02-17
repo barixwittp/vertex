@@ -17,15 +17,32 @@
 
 <hr>
 
-<h2>📸 Screenshots</h2>
+<h2>📸 Screenshots : Pc View</h2>
 <p><em>Below are some screenshots of the application:</em></p>
 <div>
-    <h2><em>Home Page : Dashboard</em></h2>
-    <img src="laptop view/pic1.png" alt="Screenshot 1" width="600">
-    <img src="path/to/screenshot2.png" alt="Screenshot 2" width="600">
-    <img src="path/to/screenshot3.png" alt="Screenshot 3" width="600">
-    <img src="path/to/screenshot4.png" alt="Screenshot 4" width="600">
-    <img src="path/to/screenshot5.png" alt="Screenshot 5" width="600">
+    <h2><em>Home Page : Dashboard - Light Theame</em></h2>
+    <img src="laptop view/pic 1.png" alt="Screenshot 1" width="600">
+    <h2><em>Home Page : Dashboard - Dark Theame</em></h2>
+    <img src="laptop view/pic 2.png" alt="Screenshot 1" width="600">
+    <h2><em>Home Page : Dashboard - Historical Aqi Trend</em></h2>
+    <img src="laptop view/pic 3.png" alt="Screenshot 1" width="600">
+    <h2><em>Maps : Explore Air Quality Index of Different Locations</em></h2>
+    <img src="laptop view/pic 4.png" alt="Screenshot 1" width="600">
+    <h2><em>Maps : Explore Air Quality Index of Different Locations Based on AQI Legend Scale<em></h2>
+    <img src="laptop view/pic 5.png" alt="Screenshot 1" width="600">
+    <h2><em>Maps : Explore Air Quality Index of Different Locations Using Search Bar</em></h2>
+    <img src="laptop view/pic 6.png" alt="Screenshot 1" width="600">
+    <h2><em>Search Location</em></h2>
+    <img src="laptop view/pic 7.png" alt="Screenshot 1" width="600">
+    <h2><em>Search Location</em></h2>
+    <img src="laptop view/pic 8.png" alt="Screenshot 1" width="600">
+    <h2><em>Community Section : Share The Conditions of Your Locality<em></h2>
+    <img src="laptop view/pic 9.png" alt="Screenshot 1" width="600">
+    <h2><em>Community Section : Share The Conditions of Your Locality With Images<em></h2>
+    <img src="laptop view/pic 10.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 11.2.png" alt="Screenshot 1" width="600">
+    <h2><em>Maps : Adjust Settings For The Web App</em></h2>
+    <img src="laptop view/pic 12.png" alt="Screenshot 1" width="600">
 </div>
 
 <hr>
