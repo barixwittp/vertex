@@ -87,9 +87,6 @@ npm start
 
 <hr>
 
-<h2>📄 License</h2>
-<p>This project is licensed under the MIT License. Feel free to modify and use it as needed.</p>
-
 <hr>
 
 <h2>📬 Contact</h2>
