@@ -21,28 +21,28 @@
 <p><em>Below are some screenshots of the application:</em></p>
 <div>
     <h2><em>Home Page : Dashboard - Light Theame</em></h2>
-    <img src="laptop view/pic1.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic1.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Home Page : Dashboard - Dark Theame</em></h2>
-    <img src="laptop view/pic 2.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 2.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Home Page : Dashboard - Historical Aqi Trend</em></h2>
-    <img src="laptop view/pic 3.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 3.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Maps : Explore Air Quality Index of Different Locations</em></h2>
-    <img src="laptop view/pic 4.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 4.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Maps : Explore Air Quality Index of Different Locations Based on AQI Legend Scale<em></h2>
-    <img src="laptop view/pic 5.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 5.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Maps : Explore Air Quality Index of Different Locations Using Search Bar</em></h2>
-    <img src="laptop view/pic 6.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 6.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Search Location</em></h2>
-    <img src="laptop view/pic 7.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 7.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Search Location</em></h2>
-    <img src="laptop view/pic 8.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 8.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Community Section : Share The Conditions of Your Locality<em></h2>
-    <img src="laptop view/pic 9.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 9.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Community Section : Share The Conditions of Your Locality With Images<em></h2>
-    <img src="laptop view/pic 10.png" alt="Screenshot 1" width="600">
-    <img src="laptop view/11.2.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic 10.png" alt="Screenshot 1" width="400 height="300">
+    <img src="laptop view/11.2.png" alt="Screenshot 1" width="400 height="300">
     <h2><em>Settings : Adjust Settings For The Web App</em></h2>
-    <img src="laptop view/12.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/12.png" alt="Screenshot 1" width="400 height="300">
 </div>
 
 
@@ -56,9 +56,9 @@
     <h2><em>Home Page : Dashboard - Light Theame</em></h2>
     <img src="mobo view/pic 1.png" alt="Screenshot 1" width="600">
     <h2><em>Home Page : Dashboard - Dark Theame</em></h2>
-    <img src="mobo view/pic 7.png.png" alt="Screenshot 1" width="600">
+    <img src="mobo view/pic 7.png" alt="Screenshot 1" width="600">
     <h2><em>Maps : Explore Air Quality Index of Different Locations</em></h2>
-    <img src="mobo view/pic 6.png.png" alt="Screenshot 1" width="600">
+    <img src="mobo view/pic 6.png" alt="Screenshot 1" width="600">
     <h2><em>Maps : Explore Air Quality Index of Different Locations Using Search Bar</em></h2>
     <img src="mobo view/pic 5.png" alt="Screenshot 1" width="600">
     <h2><em>Search Location</em></h2>
