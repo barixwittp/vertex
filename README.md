@@ -45,10 +45,34 @@
     <img src="laptop view/12.png" alt="Screenshot 1" width="600">
 </div>
 
+
+<hr>
+
+<hr>
+
+<h2>📸 Screenshots : Mobile View</h2>
+<p><em>Below are some screenshots of the application:</em></p>
+<div>
+    <h2><em>Home Page : Dashboard - Light Theame</em></h2>
+    <img src="mobo view/pic 1.png" alt="Screenshot 1" width="600">
+    <h2><em>Home Page : Dashboard - Dark Theame</em></h2>
+    <img src="mobo view/pic 7.png.png" alt="Screenshot 1" width="600">
+    <h2><em>Maps : Explore Air Quality Index of Different Locations</em></h2>
+    <img src="mobo view/pic 6.png.png" alt="Screenshot 1" width="600">
+    <h2><em>Maps : Explore Air Quality Index of Different Locations Using Search Bar</em></h2>
+    <img src="mobo view/pic 5.png" alt="Screenshot 1" width="600">
+    <h2><em>Search Location</em></h2>
+    <img src="mobo view/pic 4.png" alt="Screenshot 1" width="600">
+    <h2><em>Community Section : Share The Conditions of Your Locality<em></h2>
+    <img src="mobo view/pic 3.png" alt="Screenshot 1" width="600">
+    <h2><em>Settings : Adjust Settings For The Web App</em></h2>
+    <img src="mobo view/pic 2.png" alt="Screenshot 1" width="600">
+</div>
+
+
 <hr>
 
 ## 🎥 Demo Video
-<h2>🎥 Demo Video</h2>
 <p><em>Watch the demo video to see VayuSathi in action Click Here 👇:</em></p>
 <a href="https://youtu.be/7cz_iVbSCL8" target="_blank">
     <img src="laptop view/pic1.png" alt="Demo Video" width="600">
