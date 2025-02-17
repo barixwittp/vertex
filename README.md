@@ -20,7 +20,7 @@
 <h2>📸 Screenshots</h2>
 <p><em>Below are some screenshots of the application:</em></p>
 <div>
-    <p><em>Home Page : Dashboard</em></p>
+    <h2><em>Home Page : Dashboard</em></h2>
     <img src="laptop view/pic1.png" alt="Screenshot 1" width="600">
     <img src="path/to/screenshot2.png" alt="Screenshot 2" width="600">
     <img src="path/to/screenshot3.png" alt="Screenshot 3" width="600">
