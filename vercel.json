@@ -1,9 +1,13 @@
 {
+  "version": 2,
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
   "framework": "nextjs",
-  "buildCommand": "next build",
-  "devCommand": "next dev",
-  "installCommand": "npm install --legacy-peer-deps",
   "outputDirectory": ".next",
+  "env": {
+    "NEXT_PUBLIC_WAQI_TOKEN": "@next_public_waqi_token",
+    "NEXT_PUBLIC_OPENWEATHER_KEY": "@next_public_openweather_key"
+  },
   "headers": [
     {
       "source": "/(.*)",
@@ -19,8 +23,21 @@
         {
           "key": "X-XSS-Protection",
           "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(self)"
         }
       ]
     }
-  ]
+  ],
+  "build": {
+    "env": {
+      "NODE_VERSION": "18.17.0"
+    }
+  }
 } 
