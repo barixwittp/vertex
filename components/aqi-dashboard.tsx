@@ -11,6 +11,7 @@ import { useLocation } from "@/components/location-provider"
 import { AQIService, AQIData } from '@/lib/api/aqi-service'
 import { Loader2, Wind, Droplets, Thermometer, AlertTriangle } from "lucide-react"
 import { motion } from "framer-motion"
+import { HistoricalTrend } from "@/components/historical-trend"
 
 const getAQIStatus = (aqi: number): { text: string; color: string; description: string } => {
   if (aqi <= 50) return { 
@@ -97,6 +98,13 @@ export function AQIDashboard() {
       </div>
     )
   }
+
+  const sampleHistoricalData = [
+    { timestamp: '2024-02-01', aqi: 45 },
+    { timestamp: '2024-02-02', aqi: 52 },
+    { timestamp: '2024-02-03', aqi: 48 },
+    // ... more data points
+  ]
 
   return (
     <div className="space-y-6">
@@ -192,6 +200,8 @@ export function AQIDashboard() {
           <PollutantBreakdown pollutants={aqiData.pollutants} />
         </Card>
       </div>
+
+      <HistoricalTrend data={sampleHistoricalData} />
     </div>
   )
 }
