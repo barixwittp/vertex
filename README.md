@@ -51,7 +51,7 @@
 <h2>🎥 Demo Video</h2>
 <p><em>Watch the demo video to see VayuSathi in action:</em></p>
 <a href="https://youtu.be/7cz_iVbSCL8" target="_blank">
-    <img src="https://youtu.be/7cz_iVbSCL8.jpg" alt="Demo Video" width="600">
+    <img src="laptop view/pic1.png" alt="Demo Video" width="600">
 </a>
 
 
