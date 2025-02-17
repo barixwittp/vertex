@@ -7,43 +7,35 @@ import { Textarea } from "@/components/ui/textarea"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Camera, MessageCircle, ThumbsUp } from "lucide-react"
 
-export function CommunityFeed() {
-  const [posts, setPosts] = useState([
-    {
-      id: 1,
-      user: "Alex",
-      avatar: "/placeholder.svg",
-      content: "Heavy smog in downtown area today. Stay safe everyone! 😷",
-      image: "/placeholder.svg",
-      likes: 24,
-      comments: 5,
-      time: "2h ago",
-    },
-    {
-      id: 2,
-      user: "Sarah",
-      avatar: "/placeholder.svg",
-      content: "Beautiful clear skies after the rain! AQI is much better now. 🌤️",
-      image: "/placeholder.svg",
-      likes: 18,
-      comments: 3,
-      time: "4h ago",
-    },
-  ])
+interface Post {
+  id: number;
+  author: string;
+  content: string;
+  timestamp: string;
+  likes: number;
+  comments: number;
+  image?: string;
+  avatar?: string;
+}
 
+interface CommunityFeedProps {
+  initialPosts?: Post[];
+}
+
+export function CommunityFeed({ initialPosts = [] }: CommunityFeedProps) {
+  const [posts, setPosts] = useState<Post[]>(initialPosts)
   const [newPost, setNewPost] = useState("")
 
-  const handlePostSubmit = (e) => {
+  const handlePostSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (newPost.trim()) {
-      const post = {
-        id: posts.length + 1,
-        user: "You",
-        avatar: "/placeholder.svg",
+      const post: Post = {
+        id: Date.now(),
+        author: "Anonymous User",
         content: newPost,
+        timestamp: new Date().toLocaleString(),
         likes: 0,
-        comments: 0,
-        time: "Just now",
+        comments: 0
       }
       setPosts([post, ...posts])
       setNewPost("")
@@ -57,10 +49,10 @@ export function CommunityFeed() {
           <Textarea
             placeholder="Share your local air quality update..."
             value={newPost}
-            onChange={(e) => setNewPost(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setNewPost(e.target.value)}
           />
           <div className="flex justify-between">
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" type="button">
               <Camera className="h-4 w-4 mr-2" />
               Add Photo
             </Button>
@@ -75,19 +67,19 @@ export function CommunityFeed() {
         <Card key={post.id} className="p-4">
           <div className="flex gap-4">
             <Avatar>
-              <AvatarImage src={post.avatar} />
-              <AvatarFallback>{post.user[0]}</AvatarFallback>
+              {post.avatar && <AvatarImage src={post.avatar} alt={post.author} />}
+              <AvatarFallback>{post.author[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1">
               <div className="flex justify-between">
-                <h4 className="font-semibold">{post.user}</h4>
-                <span className="text-sm text-muted-foreground">{post.time}</span>
+                <h4 className="font-semibold">{post.author}</h4>
+                <span className="text-sm text-muted-foreground">{post.timestamp}</span>
               </div>
               <p className="mt-2">{post.content}</p>
               {post.image && (
                 <img
-                  src={post.image || "/placeholder.svg"}
-                  alt="Post"
+                  src={post.image}
+                  alt="Post attachment"
                   className="mt-2 rounded-lg w-full h-48 object-cover"
                 />
               )}
