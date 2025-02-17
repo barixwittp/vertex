@@ -47,11 +47,14 @@
 
 <hr>
 
-<h2>🎥 Demo Video</h2>
-<p><em>Watch the demo video to see VayuSathi in action:</em></p>
-<a href="https://www.youtube.com/watch?v=your-video-id" target="_blank">
-    <img src="https://img.youtube.com/vi/your-video-id/0.jpg" alt="Demo Video" width="600">
-</a>
+## 🎥 Demo Video
+
+Watch the demo video to see VayuSathi in action:
+
+[![Watch the Demo](path/to/thumbnail.png)](demo.mp4)
+
+➡️ **[Click here to watch the demo video](demo.mp4)**  
+*(Right-click and select "Save link as..." to download)*
 
 <hr>
 
