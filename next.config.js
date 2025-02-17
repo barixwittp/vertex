@@ -4,6 +4,12 @@ const nextConfig = {
   transpilePackages: ['lucide-react'],
   images: {
     domains: ['images.unsplash.com'],
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  eslint: {
+    ignoreDuringBuilds: false,
   }
 }
 
