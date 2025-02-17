@@ -21,7 +21,7 @@
 <p><em>Below are some screenshots of the application:</em></p>
 <div>
     <h2><em>Home Page : Dashboard - Light Theame</em></h2>
-    <img src="laptop view/pic 1.png" alt="Screenshot 1" width="600">
+    <img src="laptop view/pic1.png" alt="Screenshot 1" width="600">
     <h2><em>Home Page : Dashboard - Dark Theame</em></h2>
     <img src="laptop view/pic 2.png" alt="Screenshot 1" width="600">
     <h2><em>Home Page : Dashboard - Historical Aqi Trend</em></h2>
@@ -41,7 +41,7 @@
     <h2><em>Community Section : Share The Conditions of Your Locality With Images<em></h2>
     <img src="laptop view/pic 10.png" alt="Screenshot 1" width="600">
     <img src="laptop view/pic 11.2.png" alt="Screenshot 1" width="600">
-    <h2><em>Maps : Adjust Settings For The Web App</em></h2>
+    <h2><em>Settings : Adjust Settings For The Web App</em></h2>
     <img src="laptop view/pic 12.png" alt="Screenshot 1" width="600">
 </div>
 
