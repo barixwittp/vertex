@@ -1,5 +1,5 @@
-const WAQI_API_KEY = process.env.NEXT_PUBLIC_WAQI_TOKEN;
-const OPENWEATHER_API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
+const WAQI_API_KEY = process.env.WAQI_TOKEN;
+const OPENWEATHER_API_KEY = process.env.OPENWEATHER_KEY;
 const WAQI_BASE_URL = 'https://api.waqi.info/v2';
 const OPENWEATHER_BASE_URL = 'https://api.openweathermap.org/data/2.5';
 

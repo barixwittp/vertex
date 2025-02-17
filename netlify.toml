@@ -8,6 +8,8 @@
 [build.environment]
   NEXT_USE_NETLIFY_EDGE = "true"
   NODE_VERSION = "18.17.0"
+  WAQI_TOKEN = "b243639dbe2c906a1bc5bfc91b6490daf56a051f"
+  OPENWEATHER_KEY = "86dc657e498680a0e47e0b570f1f1c71"
 
 [[headers]]
   for = "/*"
