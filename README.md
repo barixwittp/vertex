@@ -111,7 +111,7 @@ npm start
 <hr>
 
 <h2>📬 Contact</h2>
-<p>For any inquiries or feedback, reach out via email at <strong>your.email@example.com</strong> or visit our <a href="https://github.com/yourusername/VayuSathi" target="_blank">GitHub repository</a>.</p>
+<p>For any inquiries or feedback, reach out via email at <strong>67.harshit.prasad45@gmail.com</strong> or visit our <a href="https://github.com/barixwittp/vertex" target="_blank">GitHub repository</a>.</p>
 
 <hr>
 <p><em>Stay informed. Breathe safe. 🌱</em></p>
