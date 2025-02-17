@@ -13,13 +13,15 @@ interface LocationDetails {
 export interface AQIData {
   aqi: number;
   station: string;
-  city: string;
+  city?: string;
   time: string;
   pollutants: {
     pm25: number;
     pm10: number;
     o3: number;
     no2: number;
+    so2?: number;
+    co?: number;
   };
   location?: {
     lat: number;
